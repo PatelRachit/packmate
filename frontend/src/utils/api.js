@@ -49,8 +49,11 @@ export const api = {
     }).then(handle),
 
   // trips
-  getTrips: () =>
-    fetch(`${BASE}/api/trips`, { headers: auth(), credentials: 'include' }).then(handle),
+  getTrips: (params = {}) =>
+    fetch(`${BASE}/api/trips?${new URLSearchParams(params)}`, {
+      headers: auth(),
+      credentials: 'include',
+    }).then(handle),
   getMyTrips: () =>
     fetch(`${BASE}/api/trips/my-trips`, { headers: auth(), credentials: 'include' }).then(handle),
   getTrip: (id) =>
@@ -125,10 +128,18 @@ export const api = {
     }).then(handle),
   deleteTip: (id) =>
     fetch(`${BASE}/api/tips/${id}`, { method: 'DELETE', headers: auth() }).then(handle),
-  upvoteTip: (id) =>
-    fetch(`${BASE}/api/tips/${id}/upvote`, { method: 'POST', headers: auth() }).then(handle),
-  removeUpvote: (id) =>
-    fetch(`${BASE}/api/tips/${id}/upvote`, { method: 'DELETE', headers: auth() }).then(handle),
+  upvoteTip: (id, email) =>
+    fetch(`${BASE}/api/tips/${id}/upvote`, {
+      method: 'POST',
+      headers: { ...json(), ...auth() },
+      body: JSON.stringify({ email }),
+    }).then(handle),
+  removeUpvote: (id, email) =>
+    fetch(`${BASE}/api/tips/${id}/upvote`, {
+      method: 'DELETE',
+      headers: { ...json(), ...auth() },
+      body: JSON.stringify({ email }),
+    }).then(handle),
 
   // user
   getMe: () => fetch(`${BASE}/api/users/me`, { headers: auth() }).then(handle),
