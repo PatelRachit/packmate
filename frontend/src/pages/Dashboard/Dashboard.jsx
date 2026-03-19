@@ -6,11 +6,11 @@ import { mockTrips } from '../../utils/mockData';
 import TripCard from '../../components/TripCard/TripCard';
 import styles from './Dashboard.module.css';
 
-const TABS = ['all','planning','ongoing','completed'];
+const TABS = ['all', 'planning', 'ongoing', 'completed'];
 
-const Dashboard = ({ user }) => {
-  const [trips, setTrips]     = useState(mockTrips);
-  const [tab,   setTab]       = useState('all');
+const Dashboard = ({ user, isAuthenticated }) => {
+  const [trips, setTrips] = useState(mockTrips);
+  const [tab, setTab] = useState('all');
 
   const visible = tab === 'all' ? trips : trips.filter((t) => t.status === tab);
 
@@ -27,13 +27,16 @@ const Dashboard = ({ user }) => {
   return (
     <div className={styles.page}>
       <div className={`${styles.inner} container`}>
-
         <div className={styles.header}>
           <div>
             <h1 className={styles.title}>My Trips</h1>
-            {user && <p className={styles.sub}>Welcome back, {user.name.split(' ')[0]}</p>}
+            {isAuthenticated && (
+              <p className={styles.sub}>Welcome back, {user.name.split(' ')[0]}</p>
+            )}
           </div>
-          <Link to="/create-trip" className={styles.newBtn}>+ New trip</Link>
+          <Link to="/create-trip" className={styles.newBtn}>
+            + New trip
+          </Link>
         </div>
 
         {/* summary */}
@@ -80,8 +83,12 @@ const Dashboard = ({ user }) => {
         ) : (
           <div className={styles.empty}>
             <p className={styles.emptyTitle}>No trips here yet.</p>
-            <p className={styles.emptySub}>Create your first trip to start building a packing list.</p>
-            <Link to="/create-trip" className={styles.newBtn} style={{ marginTop: 16 }}>+ New trip</Link>
+            <p className={styles.emptySub}>
+              Create your first trip to start building a packing list.
+            </p>
+            <Link to="/create-trip" className={styles.newBtn} style={{ marginTop: 16 }}>
+              + New trip
+            </Link>
           </div>
         )}
       </div>
@@ -89,7 +96,10 @@ const Dashboard = ({ user }) => {
   );
 };
 
-Dashboard.propTypes = { user: PropTypes.shape({ name: PropTypes.string }) };
-Dashboard.defaultProps = { user: null };
+Dashboard.propTypes = {
+  user: PropTypes.shape({ name: PropTypes.string }),
+  isAuthenticated: PropTypes.bool.isRequired,
+};
+Dashboard.defaultProps = { user: null, isAuthenticated: false };
 
 export default Dashboard;

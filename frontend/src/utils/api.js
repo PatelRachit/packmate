@@ -1,3 +1,6 @@
+import { toast } from 'sonner';
+import { ERROR_CODE } from './errorCode';
+
 // src/utils/api.js
 const BASE = import.meta.env.REACT_APP_API_URL || 'http://localhost:5000';
 
@@ -7,8 +10,11 @@ const json = () => ({ 'Content-Type': 'application/json' });
 
 const handle = async (res) => {
   if (!res.ok) {
-    const e = await res.json().catch(() => ({ message: 'Request failed' }));
-    throw new Error(e.message || 'Request failed');
+    const e = await res.json();
+    console.error('API error', e);
+    const message = ERROR_CODE[e.errors.msg] || 'Request failed';
+    toast.error(message);
+    throw new Error(message);
   }
   return res.json();
 };
@@ -16,7 +22,7 @@ const handle = async (res) => {
 export const api = {
   // auth
   register: (d) =>
-    fetch(`${BASE}/api/auth/register`, {
+    fetch(`${BASE}/api/user`, {
       method: 'POST',
       headers: json(),
       body: JSON.stringify(d),
@@ -25,6 +31,21 @@ export const api = {
     fetch(`${BASE}/api/auth/login`, {
       method: 'POST',
       headers: json(),
+      body: JSON.stringify(d),
+      credentials: 'include',
+    }).then(handle),
+  logout: (d) =>
+    fetch(`${BASE}/api/auth/logout`, {
+      method: 'POST',
+      headers: json(),
+      credentials: 'include',
+    }).then(handle),
+
+  verify: (d) =>
+    fetch(`${BASE}/api/auth/token`, {
+      method: 'GET',
+      headers: json(),
+      credentials: 'include',
       body: JSON.stringify(d),
     }).then(handle),
 

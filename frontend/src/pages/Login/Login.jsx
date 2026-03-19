@@ -4,21 +4,35 @@ import { Link, useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { mockUser } from '../../utils/mockData';
 import styles from './Login.module.css';
+import { api } from '../../utils/api';
+import { toast } from 'sonner';
 
-const Login = ({ onLogin }) => {
+const Login = () => {
   const navigate = useNavigate();
-  const [form,    setForm]    = useState({ email: '', password: '' });
-  const [error,   setError]   = useState('');
+  const [form, setForm] = useState({ email: '', password: '' });
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const set = (k, v) => { setForm((p) => ({ ...p, [k]: v })); setError(''); };
+  const set = (k, v) => {
+    setForm((p) => ({ ...p, [k]: v }));
+    setError('');
+  };
 
   const submit = async () => {
-    if (!form.email.trim() || !form.password) { setError('Please fill in all fields.'); return; }
-    setLoading(true);
-    await new Promise((r) => setTimeout(r, 700));
-    onLogin(mockUser, 'mock_token');
-    navigate('/dashboard');
+    if (!form.email.trim() || !form.password) {
+      setError('Please fill in all fields.');
+      return;
+    }
+    try {
+      setLoading(true);
+      const response = await api.login(form);
+      console.log(response);
+      navigate('/dashboard');
+      toast.success('Logged in successfully!');
+    } catch (error) {
+      console.error('Login failed:', error);
+      setLoading(false);
+    }
   };
 
   return (
@@ -36,20 +50,32 @@ const Login = ({ onLogin }) => {
           {error && <div className={styles.errorBox}>{error}</div>}
 
           <div className={styles.field}>
-            <label className={styles.label} htmlFor="email">Email</label>
-            <input id="email" className={styles.input} type="email"
+            <label className={styles.label} htmlFor="email">
+              Email
+            </label>
+            <input
+              id="email"
+              className={styles.input}
+              type="email"
               placeholder="you@example.com"
               value={form.email}
-              onChange={(e) => set('email', e.target.value)} />
+              onChange={(e) => set('email', e.target.value)}
+            />
           </div>
 
           <div className={styles.field}>
-            <label className={styles.label} htmlFor="password">Password</label>
-            <input id="password" className={styles.input} type="password"
+            <label className={styles.label} htmlFor="password">
+              Password
+            </label>
+            <input
+              id="password"
+              className={styles.input}
+              type="password"
               placeholder="••••••••"
               value={form.password}
               onChange={(e) => set('password', e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && submit()} />
+              onKeyDown={(e) => e.key === 'Enter' && submit()}
+            />
           </div>
 
           <button className={styles.submitBtn} onClick={submit} disabled={loading}>
@@ -58,16 +84,14 @@ const Login = ({ onLogin }) => {
 
           <p className={styles.switchText}>
             No account?{' '}
-            <Link to="/register" className={styles.switchLink}>Create one free</Link>
+            <Link to="/register" className={styles.switchLink}>
+              Create one free
+            </Link>
           </p>
         </div>
-
-        <p className={styles.hint}>Demo: any email + password works.</p>
       </div>
     </div>
   );
 };
-
-Login.propTypes = { onLogin: PropTypes.func.isRequired };
 
 export default Login;

@@ -128,7 +128,7 @@ async function seed() {
       users.push({
         name: `${firstName} ${lastName}`,
         email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}${i}@example.com`,
-        passwordHash: hashPassword('password123'),
+        password: hashPassword('password123'),
         homeCity: homeCities[Math.floor(Math.random() * homeCities.length)],
         submittedTips: [],
         upvotedTips: [],
