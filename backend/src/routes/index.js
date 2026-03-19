@@ -13,7 +13,7 @@ router.use('/api/trips', tripRouter)
 router.use('/api/tips', tipsRouter)
 router.use('/api/items', itemsRouter)
 
-router.get('/test', (req, res) => {
+router.get('/api/test', (req, res) => {
   try {
     console.log('API is working')
     res.status(200).json({ message: 'API is working' })

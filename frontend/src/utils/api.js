@@ -2,7 +2,7 @@ import { toast } from 'sonner';
 import { ERROR_CODE } from './errorCode';
 
 // src/utils/api.js
-const BASE = import.meta.env.REACT_APP_API_URL || 'http://localhost:5000';
+const BASE = '';
 
 const token = () => localStorage.getItem('pm_token') || '';
 const auth = () => ({ Authorization: `Bearer ${token()}` });

@@ -1,7 +1,6 @@
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import morgan from 'morgan'
-import http from 'http'
 import express from 'express'
 import passport from 'passport'
 import initMongo from './config/mongo.js'
@@ -23,6 +22,7 @@ app.use(
     credentials: true,
   }),
 )
+
 /**
  * -------------------------- EXPRESS --------------------------
  */
@@ -50,7 +50,7 @@ app.use(cookieParser())
 app.use('/', router)
 
 /**
- *  -------------------------- Global error handler--------------------------
+ * -------------------------- Global Error Handler --------------------------
  */
 app.use((err, req, res, next) => {
   console.error('Error:', err)
@@ -62,18 +62,13 @@ app.use((err, req, res, next) => {
 })
 
 /**
- * -------------------------- HTTP SERVER --------------------------
- */
-const server = http.createServer(app)
-
-/**
  * -------------------------- APP START --------------------------
  */
 const APPSERVER = async () => {
   try {
     await initMongo()
 
-    server.listen(process.env.PORT || 5000, () => {
+    app.listen(process.env.PORT || 5000, () => {
       serverConnectionLog()
     })
   } catch (err) {
